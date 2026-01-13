@@ -5,10 +5,15 @@ import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Icon from '@/components/ui/icon';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('home');
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedCertificate, setSelectedCertificate] = useState<any>(null);
+  const [activeCategory, setActiveCategory] = useState('Все');
 
   const scrollToSection = (sectionId: string) => {
     setActiveSection(sectionId);
@@ -22,30 +27,52 @@ const Index = () => {
       name: 'Комплекс витаминов Premium',
       category: 'Витамины',
       description: 'Сбалансированный комплекс для ежедневной поддержки организма',
-      price: '2 490 ₽'
+      price: '2 490 ₽',
+      fullDescription: 'Премиальный витаминно-минеральный комплекс, разработанный для комплексной поддержки организма. Содержит 25 активных компонентов в оптимальных дозировках.',
+      composition: 'Витамины A, C, D3, E, группы B, минералы: цинк, селен, магний, кальций',
+      dosage: 'По 1 капсуле 2 раза в день во время еды',
+      contraindications: 'Индивидуальная непереносимость компонентов'
     },
     {
       id: 2,
       name: 'Омега-3 форте',
       category: 'Добавки',
       description: 'Высококонцентрированные омега-3 кислоты для сердечно-сосудистой системы',
-      price: '3 290 ₽'
+      price: '3 290 ₽',
+      fullDescription: 'Высококонцентрированный препарат с содержанием EPA и DHA из дикой морской рыбы. Поддерживает работу сердца, мозга и зрения.',
+      composition: 'EPA (эйкозапентаеновая кислота) 600 мг, DHA (докозагексаеновая кислота) 400 мг',
+      dosage: 'По 1 капсуле 1 раз в день во время еды',
+      contraindications: 'Аллергия на рыбу и морепродукты, нарушения свертываемости крови'
     },
     {
       id: 3,
       name: 'Пробиотик Pro',
       category: 'Добавки',
       description: 'Восстановление и поддержка микрофлоры кишечника',
-      price: '1 990 ₽'
+      price: '1 990 ₽',
+      fullDescription: 'Комплекс живых пробиотических культур нового поколения. 10 миллиардов КОЕ в каждой капсуле для эффективного восстановления микрофлоры.',
+      composition: 'Lactobacillus, Bifidobacterium, Streptococcus thermophilus, инулин',
+      dosage: 'По 1 капсуле 1-2 раза в день за 30 минут до еды',
+      contraindications: 'Иммунодефицитные состояния, острые кишечные инфекции'
     },
     {
       id: 4,
       name: 'Коллаген Beauty',
       category: 'Красота',
       description: 'Натуральный коллаген для кожи, волос и ногтей',
-      price: '2 790 ₽'
+      price: '2 790 ₽',
+      fullDescription: 'Гидролизованный морской коллаген с высокой биодоступностью. Обогащен витамином C и гиалуроновой кислотой для максимального эффекта.',
+      composition: 'Гидролизованный коллаген 5000 мг, витамин C 80 мг, гиалуроновая кислота 100 мг',
+      dosage: 'Растворить 1 пакетик в 200 мл воды, принимать 1 раз в день',
+      contraindications: 'Беременность, период лактации, аллергия на морепродукты'
     }
   ];
+
+  const categories = ['Все', 'Витамины', 'Добавки', 'Красота'];
+  
+  const filteredProducts = activeCategory === 'Все' 
+    ? products 
+    : products.filter(p => p.category === activeCategory);
 
   const benefits = [
     {
@@ -74,22 +101,38 @@ const Index = () => {
     {
       name: 'ISO 9001:2015',
       description: 'Система менеджмента качества',
-      type: 'Международный стандарт'
+      type: 'Международный стандарт',
+      fullInfo: 'Международный стандарт, устанавливающий требования к системе менеджмента качества организации. Подтверждает способность компании стабильно предоставлять продукцию, соответствующую требованиям потребителей и применимым законодательным требованиям.',
+      issueDate: '15.03.2023',
+      validUntil: '15.03.2026',
+      certNumber: 'RU.ISO.9001.2023.12345'
     },
     {
       name: 'GMP',
       description: 'Надлежащая производственная практика',
-      type: 'Фармацевтический стандарт'
+      type: 'Фармацевтический стандарт',
+      fullInfo: 'Good Manufacturing Practice - система норм, правил и указаний в отношении производства лекарственных средств, медицинских устройств, изделий диагностического назначения, продуктов питания, БАД.',
+      issueDate: '20.06.2023',
+      validUntil: '20.06.2026',
+      certNumber: 'GMP.2023.67890'
     },
     {
       name: 'HACCP',
       description: 'Безопасность пищевой продукции',
-      type: 'Международная сертификация'
+      type: 'Международная сертификация',
+      fullInfo: 'Hazard Analysis and Critical Control Points - система управления безопасностью пищевых продуктов. Обеспечивает идентификацию, оценку и контроль опасных факторов.',
+      issueDate: '10.09.2023',
+      validUntil: '10.09.2026',
+      certNumber: 'HACCP.2023.54321'
     },
     {
       name: 'Декларация ТР ТС',
       description: 'Соответствие техническим регламентам',
-      type: 'Таможенный союз'
+      type: 'Таможенный союз',
+      fullInfo: 'Декларация о соответствии техническим регламентам Таможенного союза. Подтверждает безопасность продукции и соответствие требованиям ТР ТС 021/2011 «О безопасности пищевой продукции».',
+      issueDate: '05.04.2023',
+      validUntil: '05.04.2026',
+      certNumber: 'ТС N RU Д-RU.АЯ46.В.12345'
     }
   ];
 
@@ -240,14 +283,21 @@ const Index = () => {
 
       <section id="products" className="py-20 bg-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-4xl font-bold text-foreground mb-4">Наша продукция</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Широкий ассортимент сертифицированной продукции для вашего здоровья
             </p>
           </div>
+          <Tabs value={activeCategory} onValueChange={setActiveCategory} className="mb-8">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-4">
+              {categories.map(cat => (
+                <TabsTrigger key={cat} value={cat}>{cat}</TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <Card key={product.id} className="hover:shadow-lg transition-shadow">
                 <CardHeader>
                   <Badge variant="secondary" className="w-fit mb-2">{product.category}</Badge>
@@ -257,7 +307,7 @@ const Index = () => {
                 <CardContent>
                   <div className="flex items-center justify-between">
                     <span className="text-2xl font-bold text-primary">{product.price}</span>
-                    <Button size="sm">Подробнее</Button>
+                    <Button size="sm" onClick={() => setSelectedProduct(product)}>Подробнее</Button>
                   </div>
                 </CardContent>
               </Card>
@@ -284,7 +334,11 @@ const Index = () => {
             </div>
             <div className="grid sm:grid-cols-2 gap-4">
               {certificates.map((cert, index) => (
-                <Card key={index} className="bg-slate-800 border-slate-700">
+                <Card 
+                  key={index} 
+                  className="bg-slate-800 border-slate-700 cursor-pointer hover:bg-slate-750 transition-colors"
+                  onClick={() => setSelectedCertificate(cert)}
+                >
                   <CardHeader>
                     <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-3">
                       <Icon name="BadgeCheck" className="text-primary" size={24} />
@@ -306,6 +360,115 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <Dialog open={!!selectedProduct} onOpenChange={() => setSelectedProduct(null)}>
+        <DialogContent className="max-w-2xl">
+          {selectedProduct && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <Badge variant="secondary">{selectedProduct.category}</Badge>
+                  <span className="text-2xl font-bold text-primary">{selectedProduct.price}</span>
+                </div>
+                <DialogTitle className="text-2xl">{selectedProduct.name}</DialogTitle>
+                <DialogDescription className="text-base">
+                  {selectedProduct.fullDescription}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Icon name="Package" size={18} className="text-primary" />
+                    Состав
+                  </h4>
+                  <p className="text-muted-foreground">{selectedProduct.composition}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Icon name="Pill" size={18} className="text-primary" />
+                    Способ применения
+                  </h4>
+                  <p className="text-muted-foreground">{selectedProduct.dosage}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Icon name="AlertCircle" size={18} className="text-primary" />
+                    Противопоказания
+                  </h4>
+                  <p className="text-muted-foreground">{selectedProduct.contraindications}</p>
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <Button className="flex-1" size="lg">
+                  <Icon name="ShoppingCart" size={18} className="mr-2" />
+                  Купить
+                </Button>
+                <Button variant="outline" size="lg">
+                  <Icon name="Heart" size={18} />
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedCertificate} onOpenChange={() => setSelectedCertificate(null)}>
+        <DialogContent className="max-w-3xl">
+          {selectedCertificate && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
+                    <Icon name="BadgeCheck" className="text-primary" size={24} />
+                  </div>
+                  <div>
+                    <DialogTitle className="text-2xl">{selectedCertificate.name}</DialogTitle>
+                    <p className="text-muted-foreground">{selectedCertificate.type}</p>
+                  </div>
+                </div>
+              </DialogHeader>
+              <div className="space-y-4 mt-4">
+                <div className="bg-slate-50 p-4 rounded-lg">
+                  <h4 className="font-semibold mb-2">Описание сертификата</h4>
+                  <p className="text-muted-foreground leading-relaxed">{selectedCertificate.fullInfo}</p>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <div className="text-sm text-muted-foreground mb-1">Номер сертификата</div>
+                    <div className="font-medium">{selectedCertificate.certNumber}</div>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <div className="text-sm text-muted-foreground mb-1">Дата выдачи</div>
+                    <div className="font-medium">{selectedCertificate.issueDate}</div>
+                  </div>
+                  <div className="bg-slate-50 p-4 rounded-lg">
+                    <div className="text-sm text-muted-foreground mb-1">Действителен до</div>
+                    <div className="font-medium">{selectedCertificate.validUntil}</div>
+                  </div>
+                </div>
+                <div className="bg-slate-50 p-6 rounded-lg flex items-center justify-center">
+                  <img 
+                    src="https://cdn.poehali.dev/projects/b757bda1-b3dd-479e-b359-207853a33363/files/dbd60539-3062-45f3-aafe-0ba4d228b20c.jpg" 
+                    alt={selectedCertificate.name}
+                    className="max-h-96 rounded cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => window.open('https://cdn.poehali.dev/projects/b757bda1-b3dd-479e-b359-207853a33363/files/dbd60539-3062-45f3-aafe-0ba4d228b20c.jpg', '_blank')}
+                  />
+                </div>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <Button className="flex-1" size="lg">
+                  <Icon name="Download" size={18} className="mr-2" />
+                  Скачать сертификат
+                </Button>
+                <Button variant="outline" size="lg">
+                  <Icon name="Printer" size={18} className="mr-2" />
+                  Печать
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <section id="faq" className="py-20 bg-white">
         <div className="container mx-auto px-4">
